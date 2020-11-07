@@ -26,9 +26,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
-  
 //-------------------------------- codice Timer -----------------------//
-
   int hour = 0;
   int min = 0;
   int sec = 0;
@@ -43,6 +41,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
       started = false;
       stopped = false;
     });
+
     timefortimer = ((hour * 60 * 60) + (min * 60) + sec);
     Timer.periodic(
         Duration(
@@ -110,9 +109,9 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                 "0" + h.toString() + ":" + m.toString() + ":" + s.toString();
           } else {
             timetodisplay =
-                h.toString() + "00:" + m.toString() + ":" + s.toString();
+                h.toString() + ":" + m.toString() + ":" + s.toString();
           }
-         timefortimer = timefortimer - 1;
+          timefortimer = timefortimer - 1;
         }
       });
     });
@@ -126,7 +125,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     });
   }
 
-  Widget timer() {
+  Widget countdown() {
     return Container(
         child: Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -278,7 +277,6 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
       ],
     ));
   }
-
   //===================== codice Cronometro =======================//
 
   bool startispressed = false;
@@ -309,7 +307,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     setState(() {
       startispressed = true;
       stopispressed = false;
-      resetispressed =true;
+      resetispressed = true;
     });
     swatch.start();
     startTime();
@@ -392,7 +390,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                     ],
                   ),
                   RaisedButton(
-                    onPressed: startispressed ? null : startCronometro ,
+                    onPressed: startispressed ? null : startCronometro,
                     padding: EdgeInsets.symmetric(
                       horizontal: 80.0,
                       vertical: 20.0,
@@ -416,31 +414,165 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   }
 
 //----------------------------- codice Gioco -----------------------------//
+  bool flag = true;
+  Stream<int> timerStream;
+  StreamSubscription<int> timerSubscription;
+  String hoursStr = '00';
+  String minutesStr = '00';
+  String secondsStr = '00';
 
-bool gamestarted = true;
-bool gamefinished = true;
+  Stream<int> stopWatchStream() {
+    StreamController<int> streamController;
+    Timer timer;
+    Duration timerInterval = Duration(seconds: 1);
+    int counter = 0;
 
+    void resetTimer() {
+      if (timer != null) {
+        timer.cancel();
+        timer = null;
+        counter = 0;
+        streamController.close();
+      }
+    }
 
-void startgame(){
+    void tick(_) {
+      counter++;
+      streamController.add(counter);
+      if (!flag) {
+        resetTimer();
+      }
+    }
 
-}
+    void startTimer() {
+      timer = Timer.periodic(timerInterval, tick);
+    }
 
+    streamController = StreamController<int>(
+      onListen: startTimer,
+      onCancel: resetTimer,
+      onResume: startTimer,
+      onPause: resetTimer,
+    );
 
-Widget gioco() {
+    return streamController.stream;
+  }
+
+  Widget cronometrostream() {
     return Container(
       child: Column(
         children: <Widget>[
-         
+          Expanded(
+            flex: 6,
+            child: Container(
+              alignment: Alignment.center,
+              child: Text(
+                "$hoursStr:$minutesStr:$secondsStr",
+                style: TextStyle(
+                  fontSize: 90.0,
+                ),
+              ),
+            ),
+          ),
+          Expanded(
+            flex: 4,
+            child: Container(
+              child: Column(
+                children: <Widget>[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      RaisedButton(
+                        onPressed: stopispressed ? null : () {
+                          stopCronometro();
+                        },
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 40.0,
+                          vertical: 15.0,
+                        ),
+                        color: Colors.red,
+                        child: Text(
+                          "Stop",
+                          style: TextStyle(
+                            fontSize: 20.0,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                      RaisedButton(
+                        onPressed: resetispressed ? null : () {
+                                resetCronometro();
+                                timerSubscription.cancel();
+                                timerStream = null;
+                                setState(() {
+                                  hoursStr = '00';
+                                  minutesStr = '00';
+                                  secondsStr = '00';
+                                });
+                              },
+                        color: Colors.blue,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 40.0,
+                          vertical: 15.0,
+                        ),
+                        child: Text(
+                          "Reset",
+                          style: TextStyle(
+                            fontSize: 20.0,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  RaisedButton(
+                    onPressed: startispressed ? null: () {
+                      startCronometro();
+                            timerStream = stopWatchStream();
+                            timerSubscription =
+                                timerStream.listen((int newTick) {
+                              setState(() {
+                                hoursStr = ((newTick / (60 * 60)) % 60)
+                                    .floor()
+                                    .toString()
+                                    .padLeft(2, '0');
+                                minutesStr = ((newTick / 60) % 60)
+                                    .floor()
+                                    .toString()
+                                    .padLeft(2, '0');
+                                secondsStr = (newTick % 60)
+                                    .floor()
+                                    .toString()
+                                    .padLeft(2, '0');
+                              });
+                            });
+                          },
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 80.0,
+                      vertical: 20.0,
+                    ),
+                    color: Colors.green,
+                    child: Text(
+                      "Start",
+                      style: TextStyle(
+                        fontSize: 20.0,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
     );
   }
-
 //------------------------------ Layout ---------------------------//
 
-TabController tb; 
+  TabController tb;
 
- @override
+  @override
   void initState() {
     tb = TabController(
       length: 3,
@@ -451,24 +583,28 @@ TabController tb;
 
   @override
   Widget build(BuildContext context) {
-   return Scaffold(
-      backgroundColor: Colors.blueGrey[900],     //impostiamo il color dello sfondo
-      appBar: AppBar(                            //usiamo un AppBar
-        title: Text(                             //chiamata TimeProject
+    return Scaffold(
+      backgroundColor: Colors.blueGrey[900], //impostiamo il colore dello sfondo
+      appBar: AppBar(
+        //usiamo un AppBar
+        title: Text(
+          //chiamata TimeProject
           "Time Project",
         ),
-          centerTitle: true,                    //centriamo il titolo
-          bottom: TabBar(                       //e nell'AppBar mettiamo 
-          tabs: <Widget>[                       //una TabBar con
-            Text("Timer"),                      //le opzioni di scelta
-            Text("Cronometro"),                 //Timer, Cronometro e Gioco
-            Text("Gioco"),                 
+        centerTitle: true, //centriamo il titolo
+        bottom: TabBar(
+          //e nell'AppBar mettiamo
+          tabs: <Widget>[
+            //una TabBar con
+            Text("Timer"), //le opzioni di scelta
+            Text("Cronometro"), //Timer, Cronometro e Gioco
+            Text("Cronometro\tStream"),
           ],
-          labelPadding: EdgeInsets.only(    
-            bottom: 18.0,                        //la distanza dal fondo della AppBar
+          labelPadding: EdgeInsets.only(
+            bottom: 18.0, //la distanza dal fondo della AppBar
           ),
           labelStyle: TextStyle(
-            fontSize: 20.0,                       //impostiamo la grandezzza del testo
+            fontSize: 20.0, //impostiamo la grandezzza del testo
           ),
           unselectedLabelColor: Colors.white,
           controller: tb,
@@ -476,11 +612,11 @@ TabController tb;
       ),
       body: TabBarView(
         children: <Widget>[
-          timer(),                               //qui richiamiamo le pagine
-          cronometro(),                          //che appariranno in base
-          gioco(),                               //alla barra selezionata
+          countdown(), //qui richiamiamo le pagine
+          cronometro(), //che appariranno in base
+          cronometrostream(), //alla barra selezionata
         ],
-        controller: tb,                          //controller della TabBar
+        controller: tb, //controller della TabBar
       ),
     );
   }
