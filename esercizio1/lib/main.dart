@@ -282,26 +282,13 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   bool startispressed = false;
   bool stopispressed = true;
   bool resetispressed = true;
-  String cronometrodisplay = "00:00:00";
-  var swatch = Stopwatch();
-  final dur = const Duration(seconds: 1);
-
-  void startTime() {
-    Timer(dur, keepRunning);
-  }
-
-  void keepRunning() {
-    if (swatch.isRunning) {
-      startTime();
-    }
-    setState(() {
-      cronometrodisplay = swatch.elapsed.inHours.toString().padLeft(2, "0") +
-          ":" +
-          (swatch.elapsed.inMinutes % 60).toString().padLeft(2, "0") +
-          ":" +
-          (swatch.elapsed.inSeconds % 60).toString().padLeft(2, "0");
-    });
-  }
+  bool stopflag = false;
+  bool resetfalg = false;
+  Stream<int> timerStream;
+  StreamSubscription<int> timerSubscription;
+  String hoursStr = '00';
+  String minutesStr = '00';
+  String secondsStr = '00';
 
   void startCronometro() {
     setState(() {
@@ -309,8 +296,6 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
       stopispressed = false;
       resetispressed = true;
     });
-    swatch.start();
-    startTime();
   }
 
   void stopCronometro() {
@@ -319,7 +304,6 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
       resetispressed = false;
       startispressed = false;
     });
-    swatch.stop();
   }
 
   void resetCronometro() {
@@ -328,98 +312,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
       startispressed = false;
       resetispressed = true;
     });
-    swatch.reset();
-    cronometrodisplay = "00:00:00";
   }
-
-  Widget cronometro() {
-    return Container(
-      child: Column(
-        children: <Widget>[
-          Expanded(
-            flex: 6,
-            child: Container(
-              alignment: Alignment.center,
-              child: Text(
-                cronometrodisplay,
-                style: TextStyle(
-                  fontSize: 50.0,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ),
-          ),
-          Expanded(
-            flex: 4,
-            child: Container(
-              child: Column(
-                children: <Widget>[
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: <Widget>[
-                      RaisedButton(
-                        onPressed: stopispressed ? null : stopCronometro,
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 40.0,
-                          vertical: 15.0,
-                        ),
-                        color: Colors.red,
-                        child: Text(
-                          "Stop",
-                          style: TextStyle(
-                            fontSize: 20.0,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                      RaisedButton(
-                        onPressed: resetispressed ? null : resetCronometro,
-                        color: Colors.blue,
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 40.0,
-                          vertical: 15.0,
-                        ),
-                        child: Text(
-                          "Reset",
-                          style: TextStyle(
-                            fontSize: 20.0,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  RaisedButton(
-                    onPressed: startispressed ? null : startCronometro,
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 80.0,
-                      vertical: 20.0,
-                    ),
-                    color: Colors.green,
-                    child: Text(
-                      "Start",
-                      style: TextStyle(
-                        fontSize: 20.0,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-//----------------------------- codice Gioco -----------------------------//
-  bool flag = true;
-  Stream<int> timerStream;
-  StreamSubscription<int> timerSubscription;
-  String hoursStr = '00';
-  String minutesStr = '00';
-  String secondsStr = '00';
 
   Stream<int> stopWatchStream() {
     StreamController<int> streamController;
@@ -439,7 +332,9 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     void tick(_) {
       counter++;
       streamController.add(counter);
-      if (!flag) {
+      if (!stopflag) {
+        while (stopflag == true) {}
+      } else if (resetfalg = true) {
         resetTimer();
       }
     }
@@ -483,9 +378,12 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
                       RaisedButton(
-                        onPressed: stopispressed ? null : () {
-                          stopCronometro();
-                        },
+                        onPressed: stopispressed
+                            ? null
+                            : () {
+                                stopflag = true;
+                                stopCronometro();
+                              },
                         padding: EdgeInsets.symmetric(
                           horizontal: 40.0,
                           vertical: 15.0,
@@ -500,7 +398,10 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                         ),
                       ),
                       RaisedButton(
-                        onPressed: resetispressed ? null : () {
+                        onPressed: resetispressed
+                            ? null
+                            : () {
+                                resetfalg = true;
                                 resetCronometro();
                                 timerSubscription.cancel();
                                 timerStream = null;
@@ -526,8 +427,11 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                     ],
                   ),
                   RaisedButton(
-                    onPressed: startispressed ? null: () {
-                      startCronometro();
+                    onPressed: startispressed
+                        ? null
+                        : () {
+                            stopflag = false;
+                            startCronometro();
                             timerStream = stopWatchStream();
                             timerSubscription =
                                 timerStream.listen((int newTick) {
@@ -575,7 +479,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   @override
   void initState() {
     tb = TabController(
-      length: 3,
+      length: 2,
       vsync: this,
     );
     super.initState();
@@ -597,8 +501,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
           tabs: <Widget>[
             //una TabBar con
             Text("Timer"), //le opzioni di scelta
-            Text("Cronometro"), //Timer, Cronometro e Gioco
-            Text("Cronometro\tStream"),
+            Text("Cronometro"), //Timer, Cronometro
           ],
           labelPadding: EdgeInsets.only(
             bottom: 18.0, //la distanza dal fondo della AppBar
@@ -611,9 +514,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         ),
       ),
       body: TabBarView(
-        children: <Widget>[
-          countdown(), //qui richiamiamo le pagine
-          cronometro(), //che appariranno in base
+        children: <Widget>[//qui richiamiamo le pagine
+          countdown(), //che appariranno in base
           cronometrostream(), //alla barra selezionata
         ],
         controller: tb, //controller della TabBar
