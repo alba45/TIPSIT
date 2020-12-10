@@ -1,22 +1,5 @@
 # chat
 
-A new Flutter project.
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-
-
-
 Nel mio programma per entrare nella chat bisogna inserire un nome che sarà il nome con cui gl'altri ti visualizzeranno.
 Ciò su cui ho lavorato di più è stato lo streamBuilder(dove vedo se ci sono nuovi messaggi e dove faccio vedere i messaggi) in cui ho dovuto capire bene il modo per usarlo al meglio e modificarlo varie volte per riuscire a far vedere all'utente tutti messaggi che invio e che ho inviato. Alla fine sono riuscito a capire il ragionamento e a sapere quando entrare nelle funzioni per cambiare l'interfaccia.
 
