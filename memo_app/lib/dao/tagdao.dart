@@ -6,11 +6,11 @@ import 'package:memo_app/entity/tag.dart';
 @dao
 abstract class TagDao {
   @Query('SELECT * FROM Person')
-  Future<List<Tag>> findAllPersons();
+  Future<List<Tag>> qt();
 
   @Query('SELECT * FROM Person WHERE id = :id')
-  Stream<Tag> findPersonById(int id);
+  Stream<Tag> qt1();
 
   @insert
-  Future<void> insertPerson(Tag person);
+  Future<void> insertTag(Tag person);
 }

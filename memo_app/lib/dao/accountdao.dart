@@ -6,11 +6,11 @@ import 'package:memo_app/entity/account.dart';
 @dao
 abstract class AccountDao {
   @Query('SELECT titolo FROM Persona')
-  Future<List<Account>> findAllMemoOfAPerson();
+  Future<List<Account>> qa();
 
   @Query('SELECT  FROM Person WHERE id = :id')
-  Stream<Account> findPersonByEmailAndPw(String email, password);
+  Stream<Account> qa2(String email, password);
 
   @insert
-  Future<void> insertPerson(Account person);
+  Future<void> insertAccount(Account person);
 }

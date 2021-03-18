@@ -6,11 +6,11 @@ import 'package:memo_app/entity/persona.dart';
 @dao
 abstract class PersonaDao {
   @Query('SELECT * FROM Person')
-  Future<List<Persona>> findAllPersons();
+  Future<List<Persona>> qp();
 
   @Query('SELECT * FROM Person WHERE id = :id')
-  Stream<Persona> findPersonById(int id);
+  Stream<Persona> qp1();
 
   @insert
-  Future<void> insertPerson(Persona person);
+  Future<void> insertPersona(Persona person);
 }
