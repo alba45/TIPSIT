@@ -1,16 +1,23 @@
+
+
+
 # memo_app
 
-A new Flutter application.
+## Antonio Alliaj
 
-## Getting Started
 
-This project is a starting point for a Flutter application.
 
-A few resources to get you started if this is your first Flutter project:
+L'app che ho creato si basa sull'estrarre i dati dal database online (firebase) 
+ed inserirle all'apertura dell'app nei posti definiti i vari 'memo'. Non sono 
+riuscito ad usare floor in quanto ho trovato difficoltà nell'introdurre delle 
+variabili che dovevano presentarsi in un certo modo per essere utilizzate nelle
+query nonostante questo l'app all'accensione prende i dati dal database correttamente 
+Riesce anche a modificare e eliminare i memo presenti nel database con dei click.
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+Nonostante il tempo impiego per cercare la soluzione a dei problemi, che probabilmente 
+si verificano perchè dopo un recente aggiornamento di dart c'è un confitto con la mia 
+versione, non sono riuscito a fare completamente tutta l'app che però si presenta 
+in condizioni discrete con qualche buona funzionalità.
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Database locale: non funzionante
+Database online: funzionante

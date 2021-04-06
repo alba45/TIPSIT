@@ -13,7 +13,7 @@ import 'package:memo_app/entity/persona.dart';
 import 'package:memo_app/entity/tag.dart';
 import 'package:sqflite/sqflite.dart' as sqflite;
 
-part 'database.g.dart'; // the generated code will be there
+// part 'database.g.dart'; // the generated code will be there
 
 @Database(version: 1, entities: [Memo,Persona,Tag,Account])
 abstract class AppDatabase extends FloorDatabase {
