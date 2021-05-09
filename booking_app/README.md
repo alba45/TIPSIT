@@ -20,5 +20,6 @@ che non mi fanno proseguire per la creazione del database.
 
 
 # Database online: funzionante
-# prenotazioni abilitate con l'inserimento dell'ora per cui si vuole prenotare, la classe che lo prenota, quale laboratorio e la data per cui si vuole prenotare
-# modifica delle stanze e aggiunta di stanze abilitata
+# Prenotazioni abilitate
+  con l'inserimento dell'ora per cui si vuole prenotare, la classe che lo prenota, quale laboratorio e la data per cui si vuole prenotare
+# Modifica delle stanze e aggiunta di stanze abilitata
